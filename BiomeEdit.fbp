@@ -414,11 +414,11 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize">resize_func</event>
                         <event name="OnUpdateUI"></event>
-                        <object class="auinotebookpage" expanded="0">
+                        <object class="auinotebookpage" expanded="1">
                             <property name="bitmap"></property>
                             <property name="label">All Biomes</property>
                             <property name="select">1</property>
-                            <object class="wxPanel" expanded="0">
+                            <object class="wxPanel" expanded="1">
                                 <property name="BottomDockable">1</property>
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
@@ -492,7 +492,7 @@
                                 <event name="OnSetFocus"></event>
                                 <event name="OnSize"></event>
                                 <event name="OnUpdateUI"></event>
-                                <object class="wxGridSizer" expanded="0">
+                                <object class="wxGridSizer" expanded="1">
                                     <property name="cols">1</property>
                                     <property name="hgap">0</property>
                                     <property name="minimum_size"></property>

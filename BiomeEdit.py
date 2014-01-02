@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 import wx
 import wx.xrc
@@ -475,7 +476,9 @@ class BiomeTable(wx.grid.PyGridTableBase):
 		for i in range(0,self.currentRows):
 			if biome[i] != None:
 				self.grid.SetCellValue(i,self.currentCols-1,biome[i].GetCellValue())
-		
+		self.grid.AutoSizeColLabelSize(self.GetNumberCols()-1)
+		if self.grid.GetColSize(self.GetNumberCols()-1)<150 :
+			self.grid.SetColSize(self.GetNumberCols()-1,150)
 		biome.SetLabel(uname)
 		biome.SetModified(False)
 		
