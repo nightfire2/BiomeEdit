@@ -43,4 +43,4 @@ Most everything is pretty obvious but there are a few things to note.
  * Double clicking on a biome label in the 'All Biomes' tab will take you to that biomes tab
  * While you can open the same biome twice it's not recommended unless you are planing to save that biome 
  * If a Biome did not have a particular attribute or field in it before editing it will be appended to the end.
- * If you 
+ * Its very important when saveing a biome to properly name that biome ending in BiomeConfig.ini. There may or may not be unexpected behavior if you don't.
