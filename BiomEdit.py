@@ -10,7 +10,7 @@ import re
 import collections
 import difflib
 
-from BiomeEditContainer import BiomeEdit
+from BiomeEditUI import BiomeEdit
 ###########################################################################
 ## Class BiomeEditApp
 ###########################################################################
@@ -31,7 +31,6 @@ class BiomeEditApp ( BiomeEdit ):
 		#event.Skip()
 		dialog = wx.DirDialog(None,'Choose a folder',os.getcwd())
 		if dialog.ShowModal() == wx.ID_OK:
-			#print dialog.GetPath()
 			allFiles = glob.glob(dialog.GetPath()+"/*BiomeConfig.ini")
 			for file in allFiles:
 				try:
@@ -152,7 +151,6 @@ class BiomeEditApp ( BiomeEdit ):
 		biomes = dict( self.biome_table.biomes)
 		willclose = True
 		for key,biome in biomes.iteritems():
-			#self.biome_table.RemoveBiome(biome.GetUniqueName())
 			if self.close_biome(biome):
 				index = self.tab_container.GetPageIndex(biome)
 				self.tab_container.DeletePage(index)
@@ -168,8 +166,6 @@ class BiomeEditApp ( BiomeEdit ):
 		
 	
 	def tab_change_func( self, event ):
-		#event.Skip()
-		
 		index = event.GetSelection()
 		page = self.tab_container.GetPage(index)
 		self.current_page = page
@@ -178,11 +174,6 @@ class BiomeEditApp ( BiomeEdit ):
 			self.tab_container.SetWindowStyleFlag((wx.aui.AUI_NB_DEFAULT_STYLE|wx.NO_BORDER|wx.aui.AUI_NB_WINDOWLIST_BUTTON) & ~wx.aui.AUI_NB_CLOSE_BUTTON & ~wx.aui.AUI_NB_CLOSE_ON_ACTIVE_TAB)
 		else:
 			self.tab_container.SetWindowStyleFlag(wx.aui.AUI_NB_DEFAULT_STYLE|wx.NO_BORDER|wx.aui.AUI_NB_WINDOWLIST_BUTTON)
-	def resize_func( self, event ):
-		event.Skip()
-	
-	def col_resize_func( self, event ):
-		event.Skip()
 		
 	def view_biome_func( self, event ):
 		if event.GetCol()>= 0 and event.GetRow()==-1:
@@ -190,10 +181,6 @@ class BiomeEditApp ( BiomeEdit ):
 			index = self.tab_container.GetPageIndex(biome)
 			self.tab_container.SetSelection(index)
 			
-		
-	def row_resize_func( self, event ):
-		event.Skip()
-		
 	def tab_close_func( self, event ):
 		index = event.GetSelection()
 		page = self.tab_container.GetPage(index)
@@ -229,9 +216,7 @@ class Biome(wx.ScrolledWindow):
 		self.uniqueName = self.GetName()
 		self.SetLabel(self.uniqueName)
 		self.SetScrollRate( 5, 5 )
-		
-		
-		
+
 		
 		#the file is loaded lets parse the lines
 		self._ParseLines()
@@ -291,9 +276,7 @@ class Biome(wx.ScrolledWindow):
 			else:
 				self.properties[key] = BiomeUnknown(line,len(self.filelines))
 				self.filelines.append(' ')
-				self.SetModified(True)
-				
-		
+				self.SetModified(True)	
 			
 	def __contains__(self,item):
 		return item in self.properties
@@ -354,9 +337,6 @@ class Biome(wx.ScrolledWindow):
 		pos = self.parent.tab_container.GetPageIndex(self)
 		if pos!=-1:
 			self.parent.tab_container.SetPageText(pos,uname)
-			
-	def SetFilePath(self,filepath):
-		print 'setting file path'
 	
 	def SetModified(self,modified):
 		if self.modified!=modified:	
@@ -386,16 +366,8 @@ class Biome(wx.ScrolledWindow):
 		self.uniqueName = self.GetName()
 		self.SetLabel(self.uniqueName)
 		self.Save()
-		
-		
-		#ensure new unique name dosn't conflict with existing open names
-		#update column label. 
-		
-		
-		
+			
 		self.SetModified(False)
-
-#def StringInterpret(self,data):
 	
 
 class BiomeFieldBase():
@@ -484,7 +456,6 @@ class BiomeTable(wx.grid.PyGridTableBase):
 		self.oldRows=Biome.Fields
 		self.currentCols=0
 		self.currentRows=0
-		#self.ColumnNames()
 		
 	def AddBiome(self,biome):
 		names = self.uniqueNames
@@ -508,16 +479,6 @@ class BiomeTable(wx.grid.PyGridTableBase):
 		
 		biome.SetLabel(uname)
 		biome.SetModified(False)
-		#for i in range(0,self.currentRows):
-		#self.grid.SetEditor(
-			
-		#oldLength = len(self.rowLabels)
-		
-		#if len(Biome.Fields) > len(self.oldRows):
-		#	self._updaterows()
-			
-		#self.
-		#print 'add column'
 		
 	def GetBiomeByIndex(self,index):
 		return self.biomes[self.columnLabels[index]]
@@ -580,14 +541,6 @@ class BiomeTable(wx.grid.PyGridTableBase):
 		msg = wx.grid.GridTableMessage(self, wx.grid.GRIDTABLE_REQUEST_VIEW_GET_VALUES)
 		self.grid.ProcessTableMessage(msg)
 	
-	
-	#def _updaterows(self):
-	#	for idx,field in enumerate(Biome.Fields):
-	#		if field not in self.oldRows:
-	#			self.grid.InsertRows(idx)
-	#			print 'insert row here'
-	#	self.oldRows=Biome.Fields
-	
 	def RemoveBiome(self,uname):
 		self.grid.DeleteCols(self.columnLabels.index(uname),True)
 		self.ResetView()
@@ -624,11 +577,9 @@ class BiomeTable(wx.grid.PyGridTableBase):
 		return Biome.Fields[row]
 		
 	def SetValue(self, row, col, value):
-		self.biomes[self.columnLabels[col]][Biome.Fields[row]]=value
-		
+		self.biomes[self.columnLabels[col]][Biome.Fields[row]]=value	
 		self.grid.Refresh()
-		#self.biomes[self.columnLabels[col]].SetModified(true)
-	
+		
 if __name__ == "__main__":
     app = wx.PySimpleApp(0)
     wx.InitAllImageHandlers()
