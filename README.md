@@ -15,6 +15,9 @@ Features
 Planned Features
 ----------------
  * Biome tabs that allow you to edit individual biomes with a nice ui
+ * Fully working undo/redo functionality
+ * copying data out of grid table (for what ever reason)
+ * maybe pasting data into grid table
  * One current limitation is that you can only edit attributes or fields that are or were in a previously opened Biome. It will not be able to add fields that do not appear in any of the opened biomes. It would nice to improve this by adding a list of default fields and a way to add extra fields as needed.
  
 Requirements
