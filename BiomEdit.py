@@ -24,7 +24,6 @@ class BiomeEditApp ( BiomeEdit ):
 		self.biome_grid.SetDefaultEditor(wx.grid.GridCellTextEditor())
 		self.biome_grid.SetTable(self.biome_table)
 		self.current_page=self.all_biomes_tab
-		#self.biome_grid.RegisterDataType("str",wx.grid.GridCellTextEditor(),wx.grid.GridCellStringRenderer())
 		
 	# Virtual event handlers, overide them in your derived class
 	def open_folder_func( self, event ):
@@ -310,7 +309,7 @@ class Biome(wx.ScrolledWindow):
 					key='Sapling '+str(s_count)
 					s_count+=1
 				else:
-					key='Render Queue '+str(r_count)
+					key='Resources Queue '+str(r_count)
 					r_count+=1
 			else:
 			
