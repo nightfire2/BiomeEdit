@@ -28,7 +28,7 @@ If on Linux just make sure you have the right packages then download the reposit
 
     python BiomeEdit.py
     
-Its important to note that currently the only files needed are BiomeEdit.py and BiomeEditContainer.py 
+Its important to note that currently the only files needed are BiomeEdit.py and BiomeEditUI.py 
 The other files are important but not needed to run the app.
 
 
