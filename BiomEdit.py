@@ -12,7 +12,7 @@ import difflib
 
 from BiomeEditContainer import BiomeEdit
 ###########################################################################
-## Class BiomeEdit
+## Class BiomeEditApp
 ###########################################################################
 class BiomeEditApp ( BiomeEdit ):
 	

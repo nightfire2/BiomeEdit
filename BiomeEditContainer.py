@@ -29,7 +29,7 @@ class BiomeEdit ( wx.Frame ):
 		self.open_folder = wx.MenuItem( self.file_menu, wx.ID_ANY, u"Open Folder", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.AppendItem( self.open_folder )
 		
-		self.open_file = wx.MenuItem( self.file_menu, wx.ID_ANY, u"Open File", wx.EmptyString, wx.ITEM_NORMAL )
+		self.open_file = wx.MenuItem( self.file_menu, wx.ID_ANY, u"Open", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.AppendItem( self.open_file )
 		
 		self.close_file = wx.MenuItem( self.file_menu, wx.ID_ANY, u"Close", wx.EmptyString, wx.ITEM_NORMAL )
