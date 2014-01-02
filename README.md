@@ -22,7 +22,7 @@ Requirements
  * Python 2.7 (not tested on earlier versions)
  * wxpython 2.8 (or higher)
 
-Instalation/Running
+Installation/Running
 -------------------
 If on Linux just make sure you have the right packages then download the repository to a directory and run the following command from inside that directory.
 
