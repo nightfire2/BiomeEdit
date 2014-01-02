@@ -5,7 +5,7 @@ An easy to use Biome Config editor for Terrain Control Biomes
 
 Features
 --------
- * In place editing of BiomeConfig files (this means comments and line spaceing are presereved)
+ * In place editing of BiomeConfig files (this means comments and line spaceing are preserved)
  * Opening multiple files or whole folders
  * Saveing all open biomes
  * Saveing a particular Biome
@@ -28,7 +28,7 @@ If on Linux just make sure you have the right packages then download the reposit
 
     python BiomeEdit.py
     
-Its important to note that currently the only files needed are BiomeEdit.py and BiomeEditUI.py 
+Its important to note that currently the only files needed are *BiomeEdit.py* and *BiomeEditUI.py*
 The other files are important for development but not needed to run the app.
 
 
