@@ -29,13 +29,10 @@ Installation/Running
 -------------------
 If on Linux just make sure you have the right packages then download the repository to a directory and run the following command from inside that directory.
 
-    python BiomeEdit.py
-    
-Its important to note that currently the only files needed are *BiomeEdit.py* and *BiomeEditUI.py*
-The other files are important for development but not needed to run the app.
+    ./BiomeEdit.py
 
-
-Windows Directions coming soon.
+If you are on windows there is a pre built package made using pyinstaller that makes things pretty straight forward.
+Simply right click on [this](https://github.com/nightfire2/BiomeEdit/blob/master/packages/BiomeEditWindows.zip) link and select save as to download the packaged windows version. Then extract the contents to a folder. You can then run the BiomeEdit.exe file to run the application. You will still need to have python installed on the computer.
 
 
 Basic Useage
