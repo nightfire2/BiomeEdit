@@ -108,11 +108,11 @@ class TCConfig(wx.ScrolledWindow):
 	def SetModified(self,modified=True):
 		if self.modified != modified:
 			self.modified=modified
-			if self.modified:
-				print ' modified'
+			#if self.modified:
+			#	print ' modified'
 				#set row and tab labels to reflect the updated status
-			else:
-				print 'unmodified'
+			#else:
+			#	print 'unmodified'
 				#unset row and tab labels to reflect the update status
 	
 	def SetFieldByIndex(self,index,value):

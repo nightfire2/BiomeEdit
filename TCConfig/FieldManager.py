@@ -35,7 +35,8 @@ class FieldManager:
 			self.fieldLabels=newfields
 		
 	def _parse(self,fieldConfig):	
-		print 'do parse'
+		return
+		
 	def AddField(self,fieldType=ConfigFieldUnknown,fieldLabel=''):
 		if fieldLabel=='':
 			fieldLabel = "Other %i" % o_count
