@@ -24,12 +24,19 @@ class BiomeEditApp ( BiomeEdit ):
 		self.all_biomes_tab.SetName("all*:*biomes")
 		self.tab_container.SetWindowStyleFlag((wx.aui.AUI_NB_DEFAULT_STYLE|wx.aui.AUI_NB_WINDOWLIST_BUTTON|wx.NO_BORDER) & ~wx.aui.AUI_NB_CLOSE_ON_ACTIVE_TAB  )
 		self.field_manager = FieldManager("")
-		self.config_table = ConfigManager(self.biome_grid,self.tab_container,self.field_manager)
-		self.biome_grid.SetDefaultEditor(wx.grid.GridCellTextEditor())
-		self.biome_grid.SetDefaultCellOverflow(False)
-		self.biome_grid.SetTable(self.config_table)
+		self.config_table = ConfigManager(self.config_grid,self.tab_container,self.field_manager)
+		self.config_grid.SetDefaultEditor(wx.grid.GridCellTextEditor())
+		self.config_grid.SetDefaultCellOverflow(False)
+		self.config_grid.SetTable(self.config_table)
 		self.current_page=self.all_biomes_tab
-		
+		self.activeUndoRedo= UndoRedoManager()
+		self.app_status.SetStatusWidths([1,-1,-1])
+	def undo_func( self, event ):
+		self.activeUndoRedo.Undo()
+		self.config_grid.ForceRefresh()
+	def redo_func( self, event ):
+		self.activeUndoRedo.Redo()
+		self.config_grid.ForceRefresh()
 	# Virtual event handlers, overide them in your derived class
 	def open_folder_func( self, event ):
 		dialog = wx.DirDialog(None,'Choose a folder',os.getcwd())
@@ -45,19 +52,19 @@ class BiomeEditApp ( BiomeEdit ):
 		self.update_menu()
 	
 	def open_config(self,filePath):
-		#try:
-		fh = open(filePath,"r")
-		data = fh.read()
-		fh.close()
-		pathInfo =self.parse_biome_path(filePath)
-		
-		return TCConfig(data,pathInfo['path'],pathInfo['name'],self.field_manager,self)
+		try:
+			fh = open(filePath,"r")
+			data = fh.read()
+			fh.close()
+			pathInfo =self.parse_biome_path(filePath)
+			
+			return TCConfig(data,pathInfo['path'],pathInfo['name'],self.field_manager,self)
 	
-		#except Exception as e:
-		dlg = wx.MessageDialog(None,"Unable to open the file\n"+filePath,"Error opening file",wx.OK |wx.ICON_WARNING)
-		dlg.ShowModal()
-		dlg.Destroy()
-		return None
+		except Exception as e:
+			dlg = wx.MessageDialog(None,"Unable to open the file\n"+filePath,"Error opening file",wx.OK |wx.ICON_WARNING)
+			dlg.ShowModal()
+			dlg.Destroy()
+			return None
 
 	def open_file_func( self, event ):
 		#event.Skip()
@@ -65,13 +72,16 @@ class BiomeEditApp ( BiomeEdit ):
 		if dialog.ShowModal() == wx.ID_OK:
 			allFiles = dialog.GetPaths()
 			#for file in allFiles:
+			print len(allFiles)
 			for filepath in dialog.GetPaths():
 				config = self.open_config(filepath)
 				if config != None:
 					self.config_table.AddConfig(config)
 					self.tab_container.AddPage( config, config.GetName(), False, wx.NullBitmap )
+	
 		dialog.Destroy()
 		self.update_menu()
+		self.config_table.UpdateAllLabels()
 	
 	def update_menu(self):
 		name= self.current_page.GetName()
@@ -92,7 +102,9 @@ class BiomeEditApp ( BiomeEdit ):
 			self.close_file.Enable()
 			self.save_file.Enable()
 			self.save_as.Enable()
-			
+		
+		self.app_status.SetStatusText("{0}: Fields       {1}: Biomes".format(len(self.field_manager),self.config_table.GetNumberCols()),1)
+		
 	def parse_biome_path(self,filePath):
 		name = filePath[filePath.rfind(os.path.sep)+1:filePath.rfind(r"BiomeConfig.ini")]
 		folderPath = os.path.dirname(filePath)
@@ -113,7 +125,7 @@ class BiomeEditApp ( BiomeEdit ):
 			dlg.Destroy()
 		if canclose:
 			self.config_table.RemoveConfig(config)
-		
+			self.activeUndoRedo.ClearHistoryByID(config.GetUniqueID())
 		return canclose
 		
 	def save_config(self,config):
@@ -121,7 +133,7 @@ class BiomeEditApp ( BiomeEdit ):
 		with open(config.GetFilePath()+os.path.sep+config.GetName()+"BiomeConfig.ini",mode='w') as myfile:
 			myfile.write(str(config))
 		config.SetModified(False)
-		self.config_table.UpdateLabel(config)
+		self.config_table.UpdateAllLabels()
 		
 		
 		
@@ -131,11 +143,13 @@ class BiomeEditApp ( BiomeEdit ):
 		config.SetFilePath(pathInfo['path'])
 		self.config_table.ChangeConfigName(config,pathInfo['name'])
 		self.save_config(config)
+		self.update_menu()
 		
 	def close_file_func( self, event ):
 		self.close_config(self.current_page)
 		index = self.tab_container.GetPageIndex(self.current_page)
 		self.tab_container.DeletePage(index)
+		self.config_table.UpdateAllLabels()
 		self.update_menu()
 	
 	def close_all_func( self, event ):
@@ -145,8 +159,8 @@ class BiomeEditApp ( BiomeEdit ):
 			if self.close_config(config):
 				index = self.tab_container.GetPageIndex(config)
 				self.tab_container.DeletePage(index)
-			
-			
+				
+		self.config_table.UpdateAllLabels()
 		self.update_menu()
 		
 	def save_all_func( self, event ):

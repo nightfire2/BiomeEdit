@@ -4,13 +4,14 @@ import wx.aui
 import wx.grid
 import collections
 from fields import *
+from UndoRedoManager import UndoRedoManager
 
 class TCConfig(wx.ScrolledWindow):
 	UniqueIDCounter=0
 	
 	def __init__(self,fileData,filePath,name,fieldManager,parent):
 		super(TCConfig,self).__init__(parent.tab_container, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL)
-
+		self.parent=parent
 		TCConfig.UniqueIDCounter += 1
 		self.uniqueID= TCConfig.UniqueIDCounter
 		self.modified=False
@@ -23,7 +24,7 @@ class TCConfig(wx.ScrolledWindow):
 		self._ParseData(fileData)
 		self.fieldManager.MergeFields(self.fields)
 		
-	def GetUniqueID():
+	def GetUniqueID(self):
 		return self.uniqueID
 		
 	def SetFilePath(self,filePath):
@@ -48,10 +49,10 @@ class TCConfig(wx.ScrolledWindow):
 			label = ""
 			if identifier in self.labelGroup:
 				self.labelGroup[identifier] += 1
-				label = "%s %i" % identifier,labelGroup[identifier]
+				label = "{0} {1}".format(identifier,self.labelGroup[identifier])
 			else:
 				self.labelGroup['#Resources Queue']+=1
-				label = "Resources Queue %i" % self.labelGroup['#Resources Queue']
+				label = "Resources Queue {0}".format(self.labelGroup['#Resources Queue'])
 			field = ConfigFieldFunc(line,label)
 		
 		return field
@@ -79,7 +80,7 @@ class TCConfig(wx.ScrolledWindow):
 			#we have something else
 				labelGroup['#Other']+=1
 				field = ConfigUnknown(line)
-				label ="%s %i","Other",labelGroup['#Other']
+				label ="{0} {1}".format("Other",labelGroup['#Other'])
 				self.fields[lable]=field
 				self.fileData.append(field)
 				
@@ -108,6 +109,8 @@ class TCConfig(wx.ScrolledWindow):
 	def SetModified(self,modified=True):
 		if self.modified != modified:
 			self.modified=modified
+			return True
+		return False
 			#if self.modified:
 			#	print ' modified'
 				#set row and tab labels to reflect the updated status
@@ -123,6 +126,10 @@ class TCConfig(wx.ScrolledWindow):
 		else:
 			return False
 	
+	def _setRawFD(self,index,field):
+		self.fileData[oldIndex]=field
+	def _setRawF(self,fieldLabel,field):
+		self.fields[fieldLabel]=field
 		
 	def SetField(self,fieldLabel,value):
 		
@@ -132,16 +139,23 @@ class TCConfig(wx.ScrolledWindow):
 				contained = fieldLabel in self.fields
 				if contained:
 					oldfield = self.fields[fieldLabel]
+					
 					oldIndex = self.fileData.index(oldfield)
-					self.fileData[oldIndex]=""
-				
-				self.fields[fieldLabel]=value
-				if not contained:
+					#self.fileData[oldIndex]=""
+					self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self._setRawFD(oldIndex,oldfield),lambda:self.setRawFD(oldIndex,value))
+					self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self._setRawF(fieldLabel,oldfield),lambda :self._setRawF(fieldLabel,value))
+					
+				else:
+					self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self.fileData.pop(),lambda:self.fileData.append(value))
+					self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self.fields.pop(fieldLabel,None),lambda:self._setRawF(fieldLabel,value))
 					self.fileData.append(value)
 				
-				self.SetModified(True)
-				
-				
+				self.fields[fieldLabel]=value				
+				modified = self.modified
+				if self.SetModified(True):
+					self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self.SetModified(False),lambda:self.SetModified(True))
+		
+				self.parent.activeUndoRedo.PushState()
 				return True
 	
 			
@@ -183,7 +197,8 @@ class TCConfig(wx.ScrolledWindow):
 			return self.GetFieldValue(self.fieldManager.GetLabel(index))
 		else:
 			return ""
-	
+	def _SetRawFV(self,fieldLabel,value):
+		self.fields[fieldLabel].SetValue(value)
 	def SetFieldValue(self,fieldLabel,value):
 		if fieldLabel in self.fields:
 			if self.fieldManager[fieldLabel]==type(value):					
@@ -191,20 +206,29 @@ class TCConfig(wx.ScrolledWindow):
 				oldValue=field.GetValue()
 				field.SetValue(value)
 				if oldValue.strip()!=value.strip():
-					self.SetModified(True)
+					
+					self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self._SetRawFV(fieldLabel,oldValue),lambda:self._SetRawFV(fieldLabel,value))
+					if self.SetModified(True):
+						self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self.SetModified(False),lambda:self.SetModified(True))
+					self.parent.activeUndoRedo.PushState() 
 				return True
 				
 		return False
 		
 			
-			
+	def _SetRawFVByIndex(self,index,value):
+		self.fields[self.fieldManager.GetLabel(index)].SetValue(value)
 	def SetFieldValueByIndex(self,index,value):
 		if self.HasIndex(index):
 			field = self.fields[self.fieldManager.GetLabel(index)]
 			oldValue = field.GetValue()
 			field.SetValue(value)
 			if oldValue.strip()!=value.strip():
-				self.SetModified(True)
+				self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self._SetRawFVByIndex(index,oldValue),lambda:self._SetRawFVByIndex(index,value))
+				if self.SetModified(True):
+					self.parent.activeUndoRedo.Do(self.GetUniqueID(),lambda:self.SetModified(False),lambda:self.SetModified(True))
+				self.parent.activeUndoRedo.PushState() 
+				
 				
 			return True
 		

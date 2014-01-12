@@ -3,3 +3,4 @@ from ConfigManager import ConfigManager
 from FieldManager import FieldManager
 from TCConfig import TCConfig
 from UI.BiomeEditUI import *
+from UndoRedoManager import UndoRedoManager

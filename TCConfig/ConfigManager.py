@@ -49,11 +49,15 @@ class ConfigManager(wx.grid.PyGridTableBase):
 		
 		self.currentRows=self.GetNumberRows()
 		self.currentCols=self.GetNumberCols()
-
+	
 	def UpdateValues( self ):
 		"""Update all displayed values"""
 		msg = wx.grid.GridTableMessage(self, wx.grid.GRIDTABLE_REQUEST_VIEW_GET_VALUES)
 		self.grid.ProcessTableMessage(msg)
+	def UpdateAllLabels(self):
+		for config in self.configs:
+			self.UpdateLabel(config)
+
 	def UpdateLabel(self,config):
 		pos = self.tabContainer.GetPageIndex(config)
 		if pos!=-1:
@@ -135,19 +139,24 @@ class ConfigManager(wx.grid.PyGridTableBase):
 		return not self.configs[col].HasFieldByIndex(row)
 		
 	def CanGetValueAs(self,row,col,t):
-		if t=="string":
+		if t==wx.grid.GRID_VALUE_STRING:
 			return True
 		else:
 			return False
 			
 	def CanSetValueAs(self,row,col,t):
-		if t=="string":
+		if t==wx.grid.GRID_VALUE_STRING:
 			return True
 		else:
 			return False
 	def GetTypeName(self, row, col):
 		"""Return the name of the data type of the value in the cell"""
-		return self.configs[col].GetFieldByIndex(col).NativeType()
+		field = self.configs[col].GetFieldByIndex(col)
+		if field != None:
+			#return wx.grid.GRID_VALUE_STRING
+			return field.NativeType()
+		else:
+			return wx.grid.GRID_VALUE_STRING
 
 	def GetValue(self, row, col):
 		return self.configs[col].GetFieldValueByIndex(row)

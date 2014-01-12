@@ -39,7 +39,7 @@ class FieldManager:
 		
 	def AddField(self,fieldType=ConfigFieldUnknown,fieldLabel=''):
 		if fieldLabel=='':
-			fieldLabel = "Other %i" % o_count
+			fieldLabel = "Other {0}".format(o_count)
 			self.o_count += 1
 		
 		self.fieldLabels.append(fieldLabel)

@@ -23,7 +23,7 @@ class BiomeEdit ( wx.Frame ):
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
-		self.m_statusBar = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
+		self.app_status = self.CreateStatusBar( 3, wx.ST_SIZEGRIP, wx.ID_ANY )
 		self.m_menubar = wx.MenuBar( 0 )
 		self.file_menu = wx.Menu()
 		self.open_folder = wx.MenuItem( self.file_menu, wx.ID_ANY, u"Open Folder", wx.EmptyString, wx.ITEM_NORMAL )
@@ -61,6 +61,15 @@ class BiomeEdit ( wx.Frame ):
 		
 		self.m_menubar.Append( self.file_menu, u"File" ) 
 		
+		self.edit_menu = wx.Menu()
+		self.undo_action = wx.MenuItem( self.edit_menu, wx.ID_ANY, u"Undo"+ u"\t" + u"CTRL+Z", wx.EmptyString, wx.ITEM_NORMAL )
+		self.edit_menu.AppendItem( self.undo_action )
+		
+		self.redo_action = wx.MenuItem( self.edit_menu, wx.ID_ANY, u"Redo"+ u"\t" + u"CTRL+SHIFT+Z", wx.EmptyString, wx.ITEM_NORMAL )
+		self.edit_menu.AppendItem( self.redo_action )
+		
+		self.m_menubar.Append( self.edit_menu, u"Edit" ) 
+		
 		self.SetMenuBar( self.m_menubar )
 		
 		bSizer1 = wx.BoxSizer( wx.VERTICAL )
@@ -69,33 +78,33 @@ class BiomeEdit ( wx.Frame ):
 		self.all_biomes_tab = wx.Panel( self.tab_container, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		all_biomes_sizer = wx.GridSizer( 0, 1, 0, 0 )
 		
-		self.biome_grid = wx.grid.Grid( self.all_biomes_tab, wx.ID_ANY, wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+		self.config_grid = wx.grid.Grid( self.all_biomes_tab, wx.ID_ANY, wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
 		
 		# Grid
-		self.biome_grid.CreateGrid( 0, 0 )
-		self.biome_grid.EnableEditing( True )
-		self.biome_grid.EnableGridLines( True )
-		self.biome_grid.EnableDragGridSize( True )
-		self.biome_grid.SetMargins( 0, 0 )
+		self.config_grid.CreateGrid( 0, 0 )
+		self.config_grid.EnableEditing( True )
+		self.config_grid.EnableGridLines( True )
+		self.config_grid.EnableDragGridSize( True )
+		self.config_grid.SetMargins( 0, 0 )
 		
 		# Columns
-		self.biome_grid.AutoSizeColumns()
-		self.biome_grid.EnableDragColMove( False )
-		self.biome_grid.EnableDragColSize( True )
-		self.biome_grid.SetColLabelSize( 30 )
-		self.biome_grid.SetColLabelAlignment( wx.ALIGN_CENTRE, wx.ALIGN_CENTRE )
+		self.config_grid.AutoSizeColumns()
+		self.config_grid.EnableDragColMove( False )
+		self.config_grid.EnableDragColSize( True )
+		self.config_grid.SetColLabelSize( 30 )
+		self.config_grid.SetColLabelAlignment( wx.ALIGN_CENTRE, wx.ALIGN_CENTRE )
 		
 		# Rows
-		self.biome_grid.AutoSizeRows()
-		self.biome_grid.EnableDragRowSize( True )
-		self.biome_grid.SetRowLabelSize( 200 )
-		self.biome_grid.SetRowLabelAlignment( wx.ALIGN_CENTRE, wx.ALIGN_CENTRE )
+		self.config_grid.AutoSizeRows()
+		self.config_grid.EnableDragRowSize( True )
+		self.config_grid.SetRowLabelSize( 200 )
+		self.config_grid.SetRowLabelAlignment( wx.ALIGN_CENTRE, wx.ALIGN_CENTRE )
 		
 		# Label Appearance
 		
 		# Cell Defaults
-		self.biome_grid.SetDefaultCellAlignment( wx.ALIGN_LEFT, wx.ALIGN_TOP )
-		all_biomes_sizer.Add( self.biome_grid, 0, wx.ALL|wx.EXPAND, 5 )
+		self.config_grid.SetDefaultCellAlignment( wx.ALIGN_LEFT, wx.ALIGN_TOP )
+		all_biomes_sizer.Add( self.config_grid, 0, wx.ALL|wx.EXPAND, 5 )
 		
 		
 		self.all_biomes_tab.SetSizer( all_biomes_sizer )
@@ -122,12 +131,14 @@ class BiomeEdit ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.save_as_func, id = self.save_as.GetId() )
 		self.Bind( wx.EVT_MENU, self.save_all_to_folder_func, id = self.save_all_to_folder.GetId() )
 		self.Bind( wx.EVT_MENU, self.exit_app_func, id = self.exit_app.GetId() )
+		self.Bind( wx.EVT_MENU, self.undo_func, id = self.undo_action.GetId() )
+		self.Bind( wx.EVT_MENU, self.redo_func, id = self.redo_action.GetId() )
 		self.tab_container.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.tab_change_func )
 		self.tab_container.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.tab_close_func )
 		self.tab_container.Bind( wx.EVT_SIZE, self.resize_func )
-		self.biome_grid.Bind( wx.grid.EVT_GRID_COL_SIZE, self.col_resize_func )
-		self.biome_grid.Bind( wx.grid.EVT_GRID_LABEL_LEFT_DCLICK, self.view_biome_func )
-		self.biome_grid.Bind( wx.grid.EVT_GRID_ROW_SIZE, self.row_resize_func )
+		self.config_grid.Bind( wx.grid.EVT_GRID_COL_SIZE, self.col_resize_func )
+		self.config_grid.Bind( wx.grid.EVT_GRID_LABEL_LEFT_DCLICK, self.view_biome_func )
+		self.config_grid.Bind( wx.grid.EVT_GRID_ROW_SIZE, self.row_resize_func )
 	
 	def __del__( self ):
 		pass
@@ -162,6 +173,12 @@ class BiomeEdit ( wx.Frame ):
 		event.Skip()
 	
 	def exit_app_func( self, event ):
+		event.Skip()
+	
+	def undo_func( self, event ):
+		event.Skip()
+	
+	def redo_func( self, event ):
 		event.Skip()
 	
 	def tab_change_func( self, event ):

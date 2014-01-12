@@ -1,5 +1,6 @@
 import re
-
+import wx
+import wx.grid
 class ConfigFieldBase(object):
 	linePattern="Invalid"
 	valuePattern="Invalid"
@@ -49,4 +50,4 @@ class ConfigFieldBase(object):
 		else:
 			return False
 	def NativeType(self):
-		return "string"
+		return wx.grid.GRID_VALUE_STRING

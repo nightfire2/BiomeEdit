@@ -1,5 +1,6 @@
 from ConfigFieldBase import ConfigFieldBase
-
+import wx
+import wx.grid
 class ConfigFieldAttribute(ConfigFieldBase):
 	linePattern=r"^([a-zA-Z0-9_]+)\:(.*)"
 	valuePattern=r"^()(.*)"
@@ -16,4 +17,4 @@ class ConfigFieldAttribute(ConfigFieldBase):
 		
 class ConfigFieldText(ConfigFieldAttribute):
 	def NativeType(self):
-		return "string"
+		return wx.grid.GRID_VALUE_STRING
