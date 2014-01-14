@@ -78,10 +78,10 @@ class TCConfig(wx.ScrolledWindow):
 				self.fileData.append(field)
 			else:
 			#we have something else
-				labelGroup['#Other']+=1
-				field = ConfigUnknown(line)
-				label ="{0} {1}".format("Other",labelGroup['#Other'])
-				self.fields[lable]=field
+				self.labelGroup['#Other']+=1
+				field = ConfigFieldUnknown(line)
+				label ="{0} {1}".format("Other",self.labelGroup['#Other'])
+				self.fields[label]=field
 				self.fileData.append(field)
 				
 			

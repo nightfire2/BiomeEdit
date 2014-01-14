@@ -20,7 +20,7 @@ class UndoRedoManager:
 	def ClearHistoryByID(self,id):
 		self.redoStack=list()
 		for a in list(self.undoStack):
-			if a['id']==id:
+			if a[0]['id']==id:
 				self.undoStack.remove(a)
 		
 	def Undo(self):

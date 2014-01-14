@@ -52,19 +52,19 @@ class BiomeEditApp ( BiomeEdit ):
 		self.update_menu()
 	
 	def open_config(self,filePath):
-		try:
-			fh = open(filePath,"r")
-			data = fh.read()
-			fh.close()
-			pathInfo =self.parse_biome_path(filePath)
-			
-			return TCConfig(data,pathInfo['path'],pathInfo['name'],self.field_manager,self)
-	
-		except Exception as e:
-			dlg = wx.MessageDialog(None,"Unable to open the file\n"+filePath,"Error opening file",wx.OK |wx.ICON_WARNING)
-			dlg.ShowModal()
-			dlg.Destroy()
-			return None
+		#try:
+		fh = open(filePath,"r")
+		data = fh.read()
+		fh.close()
+		pathInfo =self.parse_biome_path(filePath)
+		
+		return TCConfig(data,pathInfo['path'],pathInfo['name'],self.field_manager,self)
+
+		#except Exception as e:
+		dlg = wx.MessageDialog(None,"Unable to open the file\n"+filePath,"Error opening file",wx.OK |wx.ICON_WARNING)
+		dlg.ShowModal()
+		dlg.Destroy()
+		return None
 
 	def open_file_func( self, event ):
 		#event.Skip()
